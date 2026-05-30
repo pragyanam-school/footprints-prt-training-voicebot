@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild client/main.js --bundle --outfile=public/bundle.js --platform=browser",
+    "build": "npx esbuild client/main.js --bundle --outfile=public/bundle.js --platform=browser",
     "start": "node server.js"
   },
   "keywords": [],
