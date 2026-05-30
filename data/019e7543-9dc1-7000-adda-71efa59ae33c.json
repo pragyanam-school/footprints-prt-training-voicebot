@@ -1,0 +1,26 @@
+{
+  "callId": "019e7543-9dc1-7000-adda-71efa59ae33c",
+  "agentName": "Unknown Agent",
+  "city": "Unknown",
+  "area": "Unknown",
+  "persona": "Shuchi Mehra",
+  "startedAt": "2026-05-29T19:46:42.141Z",
+  "status": "completed",
+  "score": {
+    "scores": {
+      "cctv_safety": 5,
+      "highscope": 2,
+      "objection_handling": 4,
+      "visit_booking": 3,
+      "nutrition": 1,
+      "tone_empathy": 5
+    },
+    "weighted_total": 3.55,
+    "grade": "Good",
+    "top_strength": "Excellent empathy and reassurance on the parent's emotional concerns about diaper accidents and separation anxiety. The agent said 'No. You don't need to... our staff is fully trained... you can be just assured that we'll take care of it' which directly addressed the parent's guilt and anxiety with warmth and confidence.",
+    "top_gap": "The agent mentioned 'I spoke curriculum' (likely HighScope with unclear pronunciation) but never explained what it means or how it benefits the child's development. This is a critical differentiator that was completely underdeveloped.",
+    "coaching_note": "Always proactively explain HighScope as 'child-led learning that helps your child develop confidence and independence' rather than just naming it. Additionally, you missed an opportunity to mention nutritious in-house prepared meals with no junk food—this should be woven into your initial value prop. Finally, when offering the visit, try suggesting a specific day: 'Would tomorrow or Thursday work better for you to visit our Indranagar center?'"
+  },
+  "endedAt": "2026-05-29T19:46:46.126Z",
+  "transcript": "AI: Hi. I wanted to understand if you have a day care facility for my 2 year old daughter. From morning till evening.\nUser: Yes. Uh, we sell children from 9 months to 6 years. So we have preschool, we have day care, and our day care, uh, the first half is preschool where there are a lot of activity. Based on our I spoke curriculum. And in the second half, we have the day care, which again has some activities. Which city are you from?\nAI: Oh, okay. So we're in Bangalore. Actually. In Indira Nagar area. And, um, sorry. I was just I need to know more about the actual care side of things, you know. Like my daughter, Aira, she's 2.2 years old, and she's not potty trained yet. So I was wondering, how do you handle that? Like, the diapers and all?\nUser: Yeah. So we have multiple centers in Indranaga. So you could visit any of them. If you want, I can schedule a visit also. Uh, so your diaper is not a problem. These children of this age typically require diaper to be changed and have staff is trained in that. Uh, we also offer you a live CCTV feed so you can actually watch your, uh, little child from your mobile. You also get the updates of what your child is eating, slept, and all the activities, uh, they have done. I can also talk about curriculum or any other question you might have.\nAI: Oh, that good. The CCTV feed thing is actually helpful. I was worried about that. so when you say staff is trained, I mean, are they okay with it? Like, they don't make a face or anything when there are accidents? Because I feel a bit, I don't know, guilty already about leaving her.\nUser: No. You don't need to. I mean, our staff is fully trained. They they do it, uh, for every child, uh, and they're very passionate about, uh, you know, children. So that's perfectly fine. You can be just assured that we'll take care of it. Do you want me to schedule a visit for a center nearby?\nAI: Okay. Actually, before the visit, I just wanted to ask, how does the settling work? Right? Like, can I not just drop her on day 1? She gets anxious with new people very quickly. So, um, can we do it slowly? Like, maybe start with a\nUser: You ever Yeah. Which is very normal, honestly. So in settling phase, you'll have to come for a week uh, and we slowly start taking your child away. Uh, so this operation anxiety both for you and the child remains, uh, low, and, uh, we gradually settle her.\n"
+}

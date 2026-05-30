@@ -1,0 +1,26 @@
+{
+  "callId": "019e779a-6007-7447-a088-a0b868c8e01b",
+  "agentName": "Unknown Agent",
+  "city": "Unknown",
+  "area": "Unknown",
+  "persona": "Shuchi Mehra",
+  "startedAt": "2026-05-30T06:40:47.142Z",
+  "status": "completed",
+  "score": {
+    "scores": {
+      "cctv_safety": 1,
+      "highscope": 1,
+      "objection_handling": 4,
+      "visit_booking": 3,
+      "nutrition": 1,
+      "tone_empathy": 5
+    },
+    "weighted_total": 2.25,
+    "grade": "Needs Improvement",
+    "top_strength": "Excellent empathy and warm tone throughout. The agent proactively addressed Shuchi's primary anxiety about separation by explaining the gradual onboarding process in reassuring detail: 'you will leave your child for a few minutes on day 1... slowly and gradually over a week, both you and the child will become better at handling that anxiety.' This directly validated her concern about 'dumping' her daughter on day 1 and built trust.",
+    "top_gap": "Complete failure to mention any of the three critical differentiators—Live CCTV feed, HighScope curriculum, or nutritious meals policy. The parent raised a direct concern about diaper changes and staff care ('Will they be okay with changing her throughout the day?'), which was the perfect opening to mention safety monitoring via live CCTV, but the agent never pivoted to this feature.",
+    "coaching_note": "You must weave Footprints' three differentiators into every conversation naturally. When Shuchi asked about diaper changes and staff reliability, say: 'Yes, our staff are trained professionals who handle this routinely. Plus, you'll have live CCTV access on your phone, so you can check in anytime and see exactly how she's being cared for.' This addresses her concern while highlighting a key competitive advantage. Before the call ends, also mention the HighScope curriculum and nutritious meals—these directly support her desire for 'something reliable' as she returns to work."
+  },
+  "endedAt": "2026-05-30T06:40:52.497Z",
+  "transcript": "AI: Hi. I wanted to understand if you have a day care facility for my 2 year old daughter. From morning till evening.\nUser: Oh, yes. We saw children from 9 months to 6 years, so we would be happy to have your daughter uh, who's 2 year old in our centers. Happy to tell you about any more details.\nAI: Okay. Good. Actually, I'm looking at this because I'm going back to work next month. So I really need something reliable. You know. Tell me. When a child joins, how does it work? Like, we do it slowly? Or do they just have to come full day from day 1?\nUser: Yeah. Sure. I'll tell you about everything. Uh, so whenever a new George joins, 1 of the parent is supposed to be at the center. For a week. Where the the initial anxiety is taken care of, uh, by, you know, you will leave your child for a few minutes on day 1. We'll take her, uh, teacher would take her And then slowly and gradually over a week, both you and the child fill become better at handling that anxiety. And if required, we can continue doing that for second week also. But in most cases, after first week, child is well settled and parents are well settled too. Because it is also for you the first time that you're you know, away from your small ones.\nAI: Oh, thank god. I was actually really worried about that. Like, Aira has never been away from me, you know? So I was thinking, how do I just dump her here on day 1? That makes sense. Sorry. 1 second. Let me just Okay. Sorry. So you said 1 parent has to be there for a week. Does that mean I have to sit there the whole time or\nUser: Yeah. Pretty much, uh, whole time. I mean, again, it'll all depend on how things go. I mean, if she becomes comfortable on, you know, let's say day 2, maybe you can go out, uh, come back after 2 hours. It'll all depend how things uh, go move forward. But I would say that please plan for a week. I would also suggest you to actually visit 1 of our centers. So that you could actually see everything in action. Uh, can you tell me your city?\nAI: I'm in Mumbai. Chamber area. So, okay, that makes sense about the week. I can manage that actually. But tell me 1 thing. What about diapers? Like, Aira's not potty trained yet? Will the staff I mean, will they be okay with changing her throughout the day? Because I don't want them to\n"
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Footprints PRT Training</title>
+  <script type="module" src="/main.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6fa; color: #2d3436; }
+    .header { background: #fff; padding: 16px 32px; border-bottom: 2px solid #e17055; display: flex; align-items: center; gap: 12px; }
+    .header h1 { font-size: 20px; font-weight: 700; color: #e17055; }
+    .header span { font-size: 14px; color: #636e72; }
+    .container { max-width: 1100px; margin: 32px auto; padding: 0 24px; }
+    .call-card { background: #fff; border-radius: 16px; padding: 32px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .call-card h2 { font-size: 18px; margin-bottom: 8px; }
+    .call-card p { color: #636e72; font-size: 14px; margin-bottom: 24px; }
+    .agent-input { width: 100%; max-width: 320px; padding: 10px 14px; border: 1px solid #dfe6e9; border-radius: 8px; font-size: 14px; margin-bottom: 16px; display: block; }
+    .btn-start { background: #e17055; color: #fff; border: none; padding: 14px 32px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; }
+    .btn-start:disabled { background: #b2bec3; cursor: not-allowed; }
+    .btn-end { background: #d63031; color: #fff; border: none; padding: 14px 32px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; display: none; }
+    .call-status { margin-top: 20px; padding: 16px; border-radius: 10px; display: none; }
+    .call-status.active { display: block; background: #e8f5e9; border: 1px solid #81c784; }
+    .call-status.ended { display: block; background: #fff3e0; border: 1px solid #ffb74d; }
+    .calls-section h2 { font-size: 18px; margin-bottom: 16px; }
+    .call-row { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .call-row:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    .call-row .meta { font-size: 13px; color: #636e72; margin-top: 4px; }
+    .score-badge { padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 14px; }
+    .score-badge.excellent { background: #e8f5e9; color: #2e7d32; }
+    .score-badge.good { background: #e3f2fd; color: #1565c0; }
+    .score-badge.needs { background: #fff3e0; color: #e65100; }
+    .score-badge.poor { background: #fce4ec; color: #c62828; }
+    .score-badge.pending { background: #f5f5f5; color: #9e9e9e; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto; }
+    .modal.open { display: block; }
+    .modal-content { background: #fff; max-width: 720px; margin: 40px auto; border-radius: 16px; padding: 32px; position: relative; }
+    .modal-close { position: absolute; top: 16px; right: 20px; font-size: 24px; cursor: pointer; color: #636e72; background: none; border: none; }
+    .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .score-item { background: #f8f9fa; border-radius: 10px; padding: 14px; }
+    .score-item .label { font-size: 12px; color: #636e72; margin-bottom: 6px; }
+    .score-item .value { font-size: 22px; font-weight: 700; }
+    .score-item .value.high { color: #2e7d32; }
+    .score-item .value.mid { color: #e65100; }
+    .score-item .value.low { color: #c62828; }
+    .total-score { text-align: center; padding: 24px; background: #f8f9fa; border-radius: 12px; margin-bottom: 20px; }
+    .total-score .number { font-size: 56px; font-weight: 800; }
+    .coaching-box { background: #e8f5e9; border-radius: 10px; padding: 16px; margin-top: 16px; }
+    .coaching-box h4 { font-size: 13px; color: #2e7d32; margin-bottom: 6px; text-transform: uppercase; }
+    .gap-box { background: #fce4ec; border-radius: 10px; padding: 16px; margin-top: 12px; }
+    .gap-box h4 { font-size: 13px; color: #c62828; margin-bottom: 6px; text-transform: uppercase; }
+    .transcript-box { margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f8f9fa; border-radius: 10px; padding: 16px; font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+    .empty { text-align: center; padding: 48px; color: #b2bec3; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Footprints</h1>
+  <span>| PRT Sales Training Bot</span>
+</div>
+
+<div class="container">
+  <div class="call-card">
+    <h2>Start Practice Session</h2>
+    <p>Click below to begin a practice call. You will be connected to a simulated parent. Try to handle the conversation as you would a real enquiry.</p>
+    <input type="text" class="agent-input" id="agentName" placeholder="Your name (e.g. Priya, Rahul)" />
+    <br>
+    <button class="btn-start" id="btnStart" onclick="startCall()">Start Practice Call</button>
+    <button class="btn-end" id="btnEnd" onclick="endCall()">End Call</button>
+    <div class="call-status" id="callStatus"></div>
+  </div>
+
+  <div class="calls-section">
+    <h2>Recent Practice Sessions</h2>
+    <div id="callsList"></div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+</body>
+</html>

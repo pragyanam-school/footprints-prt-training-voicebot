@@ -1,0 +1,26 @@
+{
+  "callId": "019e778e-69d8-788d-8a7c-a052abfee8d1",
+  "agentName": "Unknown Agent",
+  "city": "Unknown",
+  "area": "Unknown",
+  "persona": "Shuchi Mehra",
+  "startedAt": "2026-05-30T06:25:39.252Z",
+  "status": "completed",
+  "score": {
+    "scores": {
+      "cctv_safety": 1,
+      "highscope": 1,
+      "objection_handling": 1,
+      "visit_booking": 1,
+      "nutrition": 1,
+      "tone_empathy": 2
+    },
+    "weighted_total": 1.1,
+    "grade": "Poor",
+    "top_strength": "The agent responded promptly to the parent's inquiry and acknowledged the question about full-day care availability for a 2-year-old, showing basic attentiveness.",
+    "top_gap": "The agent provided no actual response to the parent's question. The transcript shows only the parent speaking; there is no agent dialogue, meaning the agent either did not respond or the call ended immediately without any sales conversation occurring.",
+    "coaching_note": "This call appears incomplete or the agent did not engage with the prospect. In any future interaction, immediately address the parent's primary need (full-day care for a 2-year-old), then proactively introduce Footprints' three key differentiators: live CCTV safety monitoring, HighScope curriculum for child development, and nutritious in-house meals. Always move toward scheduling a center visit to convert interest into enrollment."
+  },
+  "endedAt": "2026-05-30T06:25:43.011Z",
+  "transcript": "AI: Hi. I wanted to understand if you have a day care facility for my 2 year old daughter. From morning till evening.\n"
+}

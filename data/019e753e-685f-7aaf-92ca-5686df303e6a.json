@@ -1,0 +1,26 @@
+{
+  "callId": "019e753e-685f-7aaf-92ca-5686df303e6a",
+  "agentName": "Unknown Agent",
+  "city": "Unknown",
+  "area": "Unknown",
+  "persona": "Shuchi Mehra",
+  "startedAt": "2026-05-29T19:40:45.354Z",
+  "status": "completed",
+  "score": {
+    "scores": {
+      "cctv_safety": 5,
+      "highscope": 1,
+      "objection_handling": 5,
+      "visit_booking": 2,
+      "nutrition": 1,
+      "tone_empathy": 5
+    },
+    "weighted_total": 3.15,
+    "grade": "Needs Improvement",
+    "top_strength": "Excellent objection handling on the potty training concern. The agent proactively addressed the parent's anxiety with empathy and reassurance: 'we deal with this age of children all the time and lot of them are not potty trained. So it's completely normal for us, uh, and you don't need to have any guilt around.' This directly validated the parent's emotional concern.",
+    "top_gap": "Failed to mention HighScope curriculum entirely, which is one of the three mandatory differentiators. The agent said 'I could talk about curriculum if you're interested' but never explained what makes Footprints' curriculum special or how it benefits child development.",
+    "coaching_note": "You must proactively mention all three differentiators—don't wait for parents to ask. After discussing CCTV, seamlessly transition to: 'We also use the HighScope curriculum, which is research-backed and focuses on child-led learning—this means Aira develops at her own pace in a supportive environment.' Additionally, always mention nutritious in-house meals as a key benefit, and end calls with a specific visit invitation: 'Which Whitefield center works best for you—would you be able to visit this Saturday or next Tuesday?'"
+  },
+  "endedAt": "2026-05-29T19:40:49.666Z",
+  "transcript": "AI: Hi. I wanted to understand if you have a day care facility for my 2 year old daughter. From morning till evening.\nUser: Yes. Uh, we sell to you from 9 months to uh, 8 years. So, yeah, we have preschool and daycare. We have full day daycare program in which the first half, uh, is preschool and then in the second half, we conduct uh, day care. It's all activity based day care. Which city are you speaking\nAI: Oh, okay. That's good. I'm in Bangalore. Actually. In Whitefield area, My daughter, Aaira, is 2 years and 2 months old. So she should fit. Right? And basically, I'm going back to work next month, so I'm looking for something reliable. Full daycare would work for us.\nUser: Sure. Yeah. We we as I said, we serve from 9 months to 8 years. We have multiple centers in Whitefield. So you can visit them. We offer live CCTV feed, So so you can actually watch your, uh, a child Aira, from your mobile. You also get update of what your child has eaten, slept, and then CTV feed is also AI enablers. So, you know, we you know, even if you're not not watching, our AI is watching that feed and, uh, if a child is alone or not attended, uh, we get an alarm. So yeah. I mean, uh, and then, you know, I could talk about curriculum if you're interested or if you have any other push happy to answer.\nAI: Oh, wow. Okay. The CCTV thing is actually really good. That makes me feel a bit better, honestly. Sorry. 1 second. Actually, my main worry right now is Aira is not potty trained yet. Like, she's still in diapers. So how do you handle that? Will the staff be okay with it? I don't want them to make a fuss about it. Or make her feel bad.\nUser: Okay. I mean, we change diapers all the time. We have staff trained in changing diapers, and, uh, we deal with, uh, this age of children all the time and lot of them are not potty trained. So it's completely normal for us, uh, and you don't need to have any guilt around.\nAI: Okay. That's that's good to hear. Actually, I was worried they would judge or something, but okay. So when she's there, what\n"
+}

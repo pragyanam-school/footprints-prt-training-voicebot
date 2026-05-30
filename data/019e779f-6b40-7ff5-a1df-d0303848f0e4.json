@@ -1,0 +1,26 @@
+{
+  "callId": "019e779f-6b40-7ff5-a1df-d0303848f0e4",
+  "agentName": "Unknown Agent",
+  "city": "Unknown",
+  "area": "Unknown",
+  "persona": "Shuchi Mehra",
+  "startedAt": "2026-05-30T06:43:29.077Z",
+  "status": "completed",
+  "score": {
+    "scores": {
+      "cctv_safety": 1,
+      "highscope": 1,
+      "objection_handling": 1,
+      "visit_booking": 1,
+      "nutrition": 1,
+      "tone_empathy": 1
+    },
+    "weighted_total": 1,
+    "grade": "Poor",
+    "top_strength": "The agent initiated the call with a greeting, showing basic attempt to engage.",
+    "top_gap": "The agent provided only a single 'Hi' response and did nothing else—no introduction of Footprints, no discovery questions, no mention of any differentiators (CCTV, HighScope, or nutrition), no attempt to understand the parent's needs, and no effort to book a visit. The call essentially ended before it began.",
+    "coaching_note": "This agent needs immediate retraining on call structure. After greeting, always introduce yourself and Footprints, ask an open-ended discovery question (e.g., 'What brings you to call us today?' or 'Tell me about your child'), and proactively weave in the three differentiators throughout the conversation. A strong opening would be: 'Hi! I'm [Name] with Footprints Preschool. Thanks for calling—I'd love to learn about what you're looking for in childcare and share what makes us special.'"
+  },
+  "endedAt": "2026-05-30T06:43:32.959Z",
+  "transcript": "AI: Hi.\n"
+}

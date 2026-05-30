@@ -1,0 +1,23 @@
+{
+  "name": "footprints-prt-training-voicebot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild client/main.js --bundle --outfile=public/bundle.js --platform=browser",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1",
+    "@supabase/supabase-js": "^2.106.2",
+    "@vapi-ai/web": "^2.5.2",
+    "axios": "^1.16.1",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "esbuild": "^0.28.0",
+    "express": "^5.2.1"
+  }
+}

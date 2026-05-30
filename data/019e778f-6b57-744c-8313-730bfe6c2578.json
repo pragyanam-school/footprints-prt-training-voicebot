@@ -1,0 +1,26 @@
+{
+  "callId": "019e778f-6b57-744c-8313-730bfe6c2578",
+  "agentName": "Unknown Agent",
+  "city": "Unknown",
+  "area": "Unknown",
+  "persona": "Shuchi Mehra",
+  "startedAt": "2026-05-30T06:29:14.807Z",
+  "status": "completed",
+  "score": {
+    "scores": {
+      "cctv_safety": 4,
+      "highscope": 2,
+      "objection_handling": 3,
+      "visit_booking": 4,
+      "nutrition": 1,
+      "tone_empathy": 3
+    },
+    "weighted_total": 2.95,
+    "grade": "Needs Improvement",
+    "top_strength": "The agent proactively mentioned live CCTV feed early in the conversation ('we offer live CCTV feed') and successfully invited the parent to visit the center with a specific mention of 'nearby branch,' showing good attempt at closing.",
+    "top_gap": "The agent completely failed to mention nutritious meals and the no-junk-food policy—one of Footprints' three biggest differentiators. This was a missed opportunity, especially when discussing full-time daycare care for a young child where parents are often concerned about health and nutrition.",
+    "coaching_note": "While you mentioned CCTV well, you significantly underexplained HighScope curriculum—just calling it 'high school' and 'promotes active learning' without explaining what that means for Aira's development in simple parent-friendly language. Most critically, you must proactively weave in Footprints' nutritious meals policy and no-junk-food commitment into every daycare conversation, as this directly addresses parent concerns about their child's wellbeing during full-time care."
+  },
+  "endedAt": "2026-05-30T06:29:18.691Z",
+  "transcript": "AI: Hi. I wanted to understand if you have a day care facility for my 2 year old daughter. From morning till evening.\nUser: Uh, yes. Uh, we actually sell children from the age of 9 months to 6 years. So we'd be happy to accommodate your to your oldest child. Happy to answer any questions you might\nAI: Oh, okay. That's good. Actually, I'm calling because I'm going back to work next month, and I really need something reliable, you know. My daughter is Aira.\nUser: Yes. Yeah. So, Ira, I mean,\nAI: Sorry.\nUser: sorry for cutting you. Please complete.\nAI: No. No. It's fine. So basically, Aira is 2 years and 2 months old. And I'm looking for full time care from around 8 in the morning till about 6 in the evening. Is that something you can do?\nUser: So we don't start from 8. We start from 9 and go up to 6 30. I mean, we can possibly have her at 8 45 and keep her till about uh, 6 45 if required. Uh, so yeah. I mean, would you want to visit our nearby branch and see what we all offer? I mean, we our curriculum is world famous by the name Biscope. We offer live CCTV feed, uh, and I can tell you bunch of other things if you're interested in or if you have a question, I could answer that.\nAI: Okay. That's good about the timing. Actually, I have some questions before I visit if that's okay.\nUser: Yes.\nAI: So first thing, Aira is not potty trained yet. She's still in diapers. How do you handle that? Like, will the staff change her properly or\nUser: Yeah. So our staff is fully trained to take care of, uh, 40, uh, children who are not 40 trained and therefore we equipped to change diapers, etcetera. Uh, so absolutely not a problem, and this is they're happy doing their job. We maintain a ratio of 1 is to 10 for teacher, and, uh, then there are nannies on top of it. Uh, in a daycare program, we run preschool in the first half and the second half, uh, we have, uh, few more activities, all our curriculum is high school, which is, uh, which is which promotes active active learning. And, uh, you know, I can give you more details around it too. Yeah.\nAI: Okay. Okay. Sorry. I was actually asking more about the diaper side of things. Like, how many times do you change her? And you know, will they use the diapers I bring or do you provide?\nUser: You have to bring you have to send your own diapers. So we chain we check, uh, every couple of hours. That's our standard operating process. And, uh, if required, we, uh, change the diapers.\nAI: Okay. That's good. Actually, 1 more thing on this. If she has a rash or something, what happens then? Do you inform me right away?\n"
+}
