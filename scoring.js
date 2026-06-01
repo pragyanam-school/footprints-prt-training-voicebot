@@ -26,8 +26,8 @@ const SCORING_PARAMETERS = [
     weight: 15,
     rubric: [
       { score: 15, description: 'Explained HighScope outcomes with research data — employment rates, graduation rates, or evidence that children have measurably better life outcomes' },
-      { score: 11, description: 'Mentioned it is research-based or the only research-backed early years curriculum, with at least one outcome reference' },
-      { score: 7,  description: 'Said 2-3 relevant lines about what HighScope means for child development' },
+      { score: 11, description: 'Mentioned it is research-based or the only research-backed early years curriculum, with at least one outcome reference (brain development, graduation rates, employment rates, or similar)' },
+      { score: 9,  description: 'Said 2-3 factually accurate lines about HighScope or what it means for child development — even without citing specific research data' },
       { score: 4,  description: 'Mentioned HighScope by name only, no explanation' },
       { score: 0,  description: 'Never mentioned HighScope or curriculum at all' }
     ],
@@ -71,8 +71,8 @@ const SCORING_PARAMETERS = [
     weight: 10,
     rubric: [
       { score: 10, description: 'Proactively described meal quality, no-junk-food policy, and in-house preparation' },
-      { score: 7,  description: 'Mentioned meals but only basic details, not the quality or policy' },
-      { score: 3,  description: 'Mentioned food only when asked' },
+      { score: 7,  description: 'Mentioned meals AND used quality language — words like nutritious, healthy, no junk food, fresh, or balanced meals' },
+      { score: 3,  description: 'Mentioned food or meals but with no quality language, or only mentioned it when the parent asked' },
       { score: 0,  description: 'Never mentioned meals or nutrition' }
     ],
     not_applicable_signals: []

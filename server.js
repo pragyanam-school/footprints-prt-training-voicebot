@@ -323,7 +323,10 @@ app.get('/summary/:agentId', async (req, res) => {
 
     if (!data.length) return res.json({ sessions: 0 });
 
-    const scores = data.map(c => c.score.weighted_total);
+    const scoredCalls = data.filter(c => !c.score.short_call && c.score.weighted_total !== null);
+    if (!scoredCalls.length) return res.json({ sessions: 0 });
+
+    const scores = scoredCalls.map(c => c.score.weighted_total);
     const avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
     const trend = scores.length >= 2 ? scores[scores.length - 1] - scores[0] : 0;
 
@@ -331,15 +334,14 @@ app.get('/summary/:agentId', async (req, res) => {
       cctv_safety: 0, highscope: 0, objection_handling: 0,
       visit_booking: 0, nutrition: 0, tone_empathy: 0
     };
-    data.forEach(c => {
+    scoredCalls.forEach(c => {
         if (!c.score.parameters) return;
-        if (c.score.short_call) return;
         Object.keys(paramAvgs).forEach(k => {
           paramAvgs[k] += c.score.scores?.[k]?.score || 0;
         });
       });
     Object.keys(paramAvgs).forEach(k => {
-      paramAvgs[k] = Math.round((paramAvgs[k] / data.length) * 10) / 10;
+      paramAvgs[k] = Math.round((paramAvgs[k] / scoredCalls.length) * 10) / 10;
     });
 
     const weakest = Object.entries(paramAvgs).sort((a, b) => a[1] - b[1])[0][0];
@@ -347,7 +349,7 @@ app.get('/summary/:agentId', async (req, res) => {
     // Streak calculation
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const practiceDays = new Set(data.map(c => {
+    const practiceDays = new Set(scoredCalls.map(c => {
       const d = new Date(c.started_at);
       d.setHours(0, 0, 0, 0);
       return d.getTime();
@@ -361,7 +363,7 @@ app.get('/summary/:agentId', async (req, res) => {
     }
 
     res.json({
-      sessions: data.length,
+      sessions: scoredCalls.length,
       avgScore,
       bestScore: Math.max(...scores),
       trend,
