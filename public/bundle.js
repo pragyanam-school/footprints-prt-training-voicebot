@@ -11272,21 +11272,17 @@ Reason: ${e4}`);
         <div class="number" style="color:${totalColor}">${score.weighted_total}</div>
         <div style="font-size:14px;color:#636e72;margin-top:4px">out of 100 \xB7 ${score.grade}</div>
       </div>
-    <div class="score-grid">
-        ${score.parameters ? score.parameters.map((p) => `
-          <div class="score-item">
-            <div class="label">${p.label} (${p.weight})</div>
-            <div class="value ${p.score >= p.weight * 0.7 ? "high" : p.score >= p.weight * 0.4 ? "mid" : "low"}">${p.score}/${p.weight}</div>
-          </div>
-        `).join("") : `
-      <div class="score-item"><div class="label">CCTV & Safety (20)</div><div class="value ${getScoreColor(score.scores?.cctv_safety)}">${score.scores?.cctv_safety}/20</div></div>
-          <div class="score-item"><div class="label">HighScope (20)</div><div class="value ${getScoreColor(score.scores?.highscope)}">${score.scores?.highscope}/20</div></div>
-          <div class="score-item"><div class="label">Objection Handling (20)</div><div class="value ${getScoreColor(score.scores?.objection_handling)}">${score.scores?.objection_handling}/20</div></div>
-          <div class="score-item"><div class="label">Visit Booking (15)</div><div class="value ${getScoreColor(score.scores?.visit_booking)}">${score.scores?.visit_booking}/15</div></div>
-          <div class="score-item"><div class="label">Nutrition (10)</div><div class="value ${getScoreColor(score.scores?.nutrition)}">${score.scores?.nutrition}/10</div></div>
-          <div class="score-item"><div class="label">Tone & Empathy (15)</div><div class="value ${getScoreColor(score.scores?.tone_empathy)}">${score.scores?.tone_empathy}/15</div></div>
-        `}
-      </div>
+  <div class="score-grid">
+  ${score.parameters ? score.parameters.map((p) => {
+        if (!p.applicable) {
+          return '<div class="score-item na"><div class="label">' + p.label + " (" + p.weight + ')</div><div class="value" style="color:#b2bec3">N/A</div></div>';
+        }
+        const pct = Math.round(p.score / p.weight * 100);
+        const color = pct >= 70 ? "high" : pct >= 40 ? "mid" : "low";
+        const goodLooks = p.what_good_looks_like ? '<div style="font-size:11px;color:#2e7d32;margin-top:4px;font-style:italic">' + p.what_good_looks_like + "</div>" : "";
+        return '<div class="score-item"><div class="label">' + p.label + " (" + p.weight + ')</div><div class="value ' + color + '">' + pct + '%</div><div style="font-size:11px;color:#636e72;margin-top:4px">' + p.score + "/" + p.weight + "</div>" + goodLooks + "</div>";
+      }).join("") : ""}
+</div>
       <div class="coaching-box"><h4>Top Strength</h4><p style="font-size:14px">${score.top_strength}</p></div>
       <div class="gap-box"><h4>Biggest Gap</h4><p style="font-size:14px">${score.top_gap}</p></div>
       <div class="coaching-box" style="margin-top:12px"><h4>Coaching Note</h4><p style="font-size:14px">${score.coaching_note}</p></div>
@@ -11346,11 +11342,6 @@ Reason: ${e4}`);
   }
   function closeModal() {
     document.getElementById("modal").className = "modal";
-  }
-  function getScoreColor(score) {
-    if (score >= 4) return "high";
-    if (score >= 3) return "mid";
-    return "low";
   }
   function getGradeBadge(grade) {
     if (!grade) return '<span class="score-badge pending">Pending</span>';

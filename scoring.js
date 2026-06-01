@@ -4,9 +4,6 @@ const Anthropic = require('@anthropic-ai/sdk');
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 // ─── SCORING CONFIG ───────────────────────────────────────
-// To change weights, rename parameters, or add/remove parameters:
-// Edit ONLY this section. Nothing else needs to change.
-
 const SCORING_PARAMETERS = [
   {
     key: 'cctv_safety',
@@ -14,32 +11,36 @@ const SCORING_PARAMETERS = [
     weight: 20,
     rubric: [
       { score: 20, description: 'Proactively mentioned live CCTV feed with parent app access and explained the benefit clearly' },
-      { score: 14, description: 'Mentioned CCTV but without explaining parent app access or the benefit to the parent' },
+      { score: 14, description: 'Mentioned CCTV but without explaining parent app access or the benefit' },
       { score: 8,  description: 'Mentioned safety only when asked, no specific mention of CCTV or live feed' },
       { score: 0,  description: 'Never mentioned safety, CCTV, or security in any form' }
-    ]
+    ],
+    not_applicable_signals: []
   },
   {
     key: 'highscope',
     label: 'HighScope Curriculum',
     weight: 20,
     rubric: [
-      { score: 20, description: 'Explained HighScope in outcome language — what it means for the child\'s development, with a practical example' },
-      { score: 14, description: 'Mentioned HighScope by name and gave some explanation but no practical outcome' },
-      { score: 8,  description: 'Mentioned curriculum vaguely without naming HighScope or explaining it' },
-      { score: 0,  description: 'Never mentioned curriculum or HighScope at all' }
-    ]
+      { score: 20, description: 'Explained HighScope outcomes with research data — employment rates, graduation rates, or similar evidence that children who go through this curriculum have measurably better life outcomes' },
+      { score: 15, description: 'Mentioned it is research-based or the only research-backed early years curriculum, with at least one outcome reference' },
+      { score: 10, description: 'Said 2-3 relevant lines about what HighScope means for child development' },
+      { score: 5,  description: 'Mentioned HighScope by name only, no explanation' },
+      { score: 0,  description: 'Never mentioned HighScope or curriculum at all' }
+    ],
+    not_applicable_signals: []
   },
   {
     key: 'objection_handling',
     label: 'Objection Handling',
     weight: 20,
     rubric: [
-      { score: 20, description: 'Addressed the parent\'s primary concern with empathy, specific details, and a reassuring example' },
+      { score: 20, description: 'Addressed the parent primary concern with empathy, specific details, and a reassuring example' },
       { score: 14, description: 'Addressed the concern but without empathy or specific details' },
       { score: 8,  description: 'Partially addressed the concern, deflected or gave a generic answer' },
-      { score: 0,  description: 'Ignored or completely deflected the parent\'s main concern' }
-    ]
+      { score: 0,  description: 'Ignored or completely deflected the parent main concern' }
+    ],
+    not_applicable_signals: ['no objection raised', 'parent had no concerns']
   },
   {
     key: 'visit_booking',
@@ -50,6 +51,15 @@ const SCORING_PARAMETERS = [
       { score: 10, description: 'Mentioned a visit but without a specific day or time' },
       { score: 5,  description: 'Mentioned visit only when parent asked, or very passively' },
       { score: 0,  description: 'Never mentioned a center visit' }
+    ],
+    not_applicable_signals: [
+      'parent already visited',
+      'parent has already come to center',
+      'I visited your center',
+      'we came last week',
+      'after our visit',
+      'when I visited',
+      'parent already admitted'
     ]
   },
   {
@@ -61,7 +71,8 @@ const SCORING_PARAMETERS = [
       { score: 7,  description: 'Mentioned meals but only basic details, not the quality or policy' },
       { score: 3,  description: 'Mentioned food only when asked' },
       { score: 0,  description: 'Never mentioned meals or nutrition' }
-    ]
+    ],
+    not_applicable_signals: []
   },
   {
     key: 'tone_empathy',
@@ -72,7 +83,8 @@ const SCORING_PARAMETERS = [
       { score: 10, description: 'Professional and polite but transactional, did not address emotional concerns' },
       { score: 5,  description: 'Somewhat robotic or rushed, missed emotional cues' },
       { score: 0,  description: 'Dismissive, impatient, or made the parent feel unheard' }
-    ]
+    ],
+    not_applicable_signals: []
   }
 ];
 
@@ -86,15 +98,16 @@ const GRADE_THRESHOLDS = [
 // ─── END OF CONFIG ────────────────────────────────────────
 
 function buildScoringPrompt(transcript, personaName, city, area) {
-  const totalWeight = SCORING_PARAMETERS.reduce((sum, p) => sum + p.weight, 0);
-
   let paramSection = SCORING_PARAMETERS.map((p, i) => {
     const rubricLines = p.rubric.map(r => `  ${r.score} = ${r.description}`).join('\n');
-    return `${i + 1}. ${p.label} — score out of ${p.weight}\n${rubricLines}`;
+    const naSignals = p.not_applicable_signals.length > 0
+      ? `\n  Mark as NOT APPLICABLE if: ${p.not_applicable_signals.join('; ')}`
+      : '';
+    return `${i + 1}. ${p.label} — score out of ${p.weight}${naSignals}\n${rubricLines}`;
   }).join('\n\n');
 
   const jsonScoreFields = SCORING_PARAMETERS.map(p =>
-    `    "${p.key}": 0`
+    `    "${p.key}": { "score": 0, "applicable": true, "what_good_looks_like": "specific example of what the agent should have said", "evidence": "quote or reference from transcript supporting this score" }`
   ).join(',\n');
 
   return (
@@ -103,11 +116,17 @@ function buildScoringPrompt(transcript, personaName, city, area) {
     "Here is the full call transcript:\n" + transcript + "\n\n" +
     "Footprints three biggest differentiators that agents MUST mention:\n" +
     "1. Live CCTV feed accessible by parents on their phone\n" +
-    "2. HighScope curriculum - US-based, research-backed, focuses on child-led learning (NOT high school curriculum)\n" +
+    "2. HighScope curriculum - the ONLY research-backed early years curriculum with data showing children have better employment rates, graduation rates, and life outcomes\n" +
     "3. Nutritious meals - no junk food, healthy snacks, in-house preparation\n\n" +
-    "Score the agent on each parameter directly out of its maximum weight. Use decimals if needed.\n\n" +
+    "IMPORTANT RULES:\n" +
+    "1. Only score parameters that were actually relevant to this call.\n" +
+    "2. If a parameter was not applicable (e.g. parent already visited so Visit Booking is irrelevant), set applicable to false and score to null.\n" +
+    "3. For each parameter, provide what_good_looks_like — a specific example sentence the agent should have said.\n" +
+    "4. For each parameter, provide evidence — a direct quote or reference from the transcript supporting your score. If not mentioned, say 'Not mentioned in transcript'.\n" +
+    "5. Be fair but accurate. If the agent mentioned something briefly, give partial credit.\n\n" +
+    "Score each applicable parameter directly out of its maximum weight:\n\n" +
     paramSection + "\n\n" +
-    "Return ONLY this JSON, nothing else:\n" +
+    "Return ONLY this exact JSON, nothing else:\n" +
     "{\n" +
     '  "scores": {\n' +
     jsonScoreFields + "\n" +
@@ -119,23 +138,49 @@ function buildScoringPrompt(transcript, personaName, city, area) {
   );
 }
 
-function calculateTotal(scores) {
-  return SCORING_PARAMETERS.reduce((sum, p) => sum + (scores[p.key] || 0), 0);
-}
+function calculateResults(scores) {
+  let totalScore = 0;
+  let totalApplicableWeight = 0;
 
-function calculateGrade(total) {
+  const parameters = SCORING_PARAMETERS.map(p => {
+    const s = scores[p.key];
+    const applicable = s?.applicable !== false;
+    const score = applicable ? (s?.score || 0) : null;
+
+    if (applicable) {
+      totalScore += score;
+      totalApplicableWeight += p.weight;
+    }
+
+    return {
+      key: p.key,
+      label: p.label,
+      weight: p.weight,
+      score,
+      applicable,
+      what_good_looks_like: s?.what_good_looks_like || '',
+      evidence: s?.evidence || ''
+    };
+  });
+
+  const percentage = totalApplicableWeight > 0
+    ? Math.round((totalScore / totalApplicableWeight) * 100)
+    : 0;
+
+  let grade;
   for (const threshold of GRADE_THRESHOLDS) {
-    if (total >= threshold.min) return threshold.grade;
+    if (percentage >= threshold.min) { grade = threshold.grade; break; }
   }
-  return 'Poor';
+
+  return { parameters, totalScore, totalApplicableWeight, percentage, grade };
 }
 
 async function scoreCall(transcript, personaName, city, area) {
   const prompt = buildScoringPrompt(transcript, personaName, city, area);
 
   const response = await client.messages.create({
-    model: 'claude-haiku-4-5',
-    max_tokens: 1000,
+    model: 'claude-sonnet-4-5-20250929',
+    max_tokens: 2000,
     messages: [{ role: 'user', content: prompt }]
   });
 
@@ -143,21 +188,19 @@ async function scoreCall(transcript, personaName, city, area) {
   const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
   const parsed = JSON.parse(cleaned);
 
-  // Calculate total and grade ourselves — never trust LLM math
-  const weighted_total = Math.round(calculateTotal(parsed.scores) * 10) / 10;
-  const grade = calculateGrade(weighted_total);
+  const { parameters, totalScore, totalApplicableWeight, percentage, grade } = calculateResults(parsed.scores);
 
-  parsed.weighted_total = weighted_total;
-  parsed.grade = grade;
-  parsed.parameters = SCORING_PARAMETERS.map(p => ({
-    key: p.key,
-    label: p.label,
-    weight: p.weight,
-    score: parsed.scores[p.key] || 0
-  }));
-
-  return parsed;
+  return {
+    scores: parsed.scores,
+    parameters,
+    totalScore,
+    totalApplicableWeight,
+    weighted_total: percentage,
+    grade,
+    top_strength: parsed.top_strength,
+    top_gap: parsed.top_gap,
+    coaching_note: parsed.coaching_note
+  };
 }
 
-// Export config so dashboard can use parameter labels and weights
 module.exports = { scoreCall, SCORING_PARAMETERS };
