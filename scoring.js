@@ -4,15 +4,18 @@ const Anthropic = require('@anthropic-ai/sdk');
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 // ─── SCORING CONFIG ───────────────────────────────────────
+// To change weights, rename parameters, or add/remove parameters:
+// Edit ONLY this section. Nothing else needs to change.
+
 const SCORING_PARAMETERS = [
   {
     key: 'cctv_safety',
     label: 'CCTV & Safety',
-    weight: 20,
+    weight: 15,
     rubric: [
-      { score: 20, description: 'Proactively mentioned live CCTV feed with parent app access and explained the benefit clearly' },
-      { score: 14, description: 'Mentioned CCTV but without explaining parent app access or the benefit' },
-      { score: 8,  description: 'Mentioned safety only when asked, no specific mention of CCTV or live feed' },
+      { score: 15, description: 'Proactively mentioned live CCTV feed with parent app access and explained the benefit clearly' },
+      { score: 11, description: 'Mentioned CCTV but without explaining parent app access or the benefit' },
+      { score: 6,  description: 'Mentioned safety only when asked, no specific mention of CCTV or live feed' },
       { score: 0,  description: 'Never mentioned safety, CCTV, or security in any form' }
     ],
     not_applicable_signals: []
@@ -20,12 +23,12 @@ const SCORING_PARAMETERS = [
   {
     key: 'highscope',
     label: 'HighScope Curriculum',
-    weight: 20,
+    weight: 15,
     rubric: [
-      { score: 20, description: 'Explained HighScope outcomes with research data — employment rates, graduation rates, or similar evidence that children who go through this curriculum have measurably better life outcomes' },
-      { score: 15, description: 'Mentioned it is research-based or the only research-backed early years curriculum, with at least one outcome reference' },
-      { score: 10, description: 'Said 2-3 relevant lines about what HighScope means for child development' },
-      { score: 5,  description: 'Mentioned HighScope by name only, no explanation' },
+      { score: 15, description: 'Explained HighScope outcomes with research data — employment rates, graduation rates, or evidence that children have measurably better life outcomes' },
+      { score: 11, description: 'Mentioned it is research-based or the only research-backed early years curriculum, with at least one outcome reference' },
+      { score: 7,  description: 'Said 2-3 relevant lines about what HighScope means for child development' },
+      { score: 4,  description: 'Mentioned HighScope by name only, no explanation' },
       { score: 0,  description: 'Never mentioned HighScope or curriculum at all' }
     ],
     not_applicable_signals: []
@@ -33,11 +36,11 @@ const SCORING_PARAMETERS = [
   {
     key: 'objection_handling',
     label: 'Objection Handling',
-    weight: 20,
+    weight: 15,
     rubric: [
-      { score: 20, description: 'Addressed the parent primary concern with empathy, specific details, and a reassuring example' },
-      { score: 14, description: 'Addressed the concern but without empathy or specific details' },
-      { score: 8,  description: 'Partially addressed the concern, deflected or gave a generic answer' },
+      { score: 15, description: 'Addressed the parent primary concern with empathy, specific details, and a reassuring example' },
+      { score: 11, description: 'Addressed the concern but without empathy or specific details' },
+      { score: 6,  description: 'Partially addressed the concern, deflected or gave a generic answer' },
       { score: 0,  description: 'Ignored or completely deflected the parent main concern' }
     ],
     not_applicable_signals: ['no objection raised', 'parent had no concerns']
@@ -45,11 +48,11 @@ const SCORING_PARAMETERS = [
   {
     key: 'visit_booking',
     label: 'Visit Booking',
-    weight: 15,
+    weight: 10,
     rubric: [
-      { score: 15, description: 'Clearly invited the parent for a center visit with a specific day or time suggestion' },
-      { score: 10, description: 'Mentioned a visit but without a specific day or time' },
-      { score: 5,  description: 'Mentioned visit only when parent asked, or very passively' },
+      { score: 10, description: 'Clearly invited the parent for a center visit with a specific day or time suggestion' },
+      { score: 7,  description: 'Mentioned a visit but without a specific day or time' },
+      { score: 3,  description: 'Mentioned visit only when parent asked, or very passively' },
       { score: 0,  description: 'Never mentioned a center visit' }
     ],
     not_applicable_signals: [
@@ -80,9 +83,21 @@ const SCORING_PARAMETERS = [
     weight: 15,
     rubric: [
       { score: 15, description: 'Warm, patient, genuinely addressed emotional concerns, made the parent feel heard' },
-      { score: 10, description: 'Professional and polite but transactional, did not address emotional concerns' },
-      { score: 5,  description: 'Somewhat robotic or rushed, missed emotional cues' },
+      { score: 11, description: 'Professional and polite but transactional, did not address emotional concerns' },
+      { score: 6,  description: 'Somewhat robotic or rushed, missed emotional cues' },
       { score: 0,  description: 'Dismissive, impatient, or made the parent feel unheard' }
+    ],
+    not_applicable_signals: []
+  },
+  {
+    key: 'responsiveness',
+    label: 'Responsiveness & Active Listening',
+    weight: 20,
+    rubric: [
+      { score: 20, description: 'Directly answered what the parent asked before adding other information. Conversation felt natural, parent felt heard, no monologuing' },
+      { score: 15, description: 'Mostly answered parent questions but occasionally added unrequested information' },
+      { score: 8,  description: 'Frequently gave information the parent did not ask for, missed specific questions' },
+      { score: 0,  description: 'Completely ignored parent questions, delivered a monologue' }
     ],
     not_applicable_signals: []
   }
@@ -95,19 +110,25 @@ const GRADE_THRESHOLDS = [
   { min: 0,  grade: 'Poor' }
 ];
 
+const SHORT_CALL_WORD_THRESHOLD = 300;
+
 // ─── END OF CONFIG ────────────────────────────────────────
+
+function countWords(text) {
+  return text.trim().split(/\s+/).length;
+}
 
 function buildScoringPrompt(transcript, personaName, city, area) {
   let paramSection = SCORING_PARAMETERS.map((p, i) => {
     const rubricLines = p.rubric.map(r => `  ${r.score} = ${r.description}`).join('\n');
     const naSignals = p.not_applicable_signals.length > 0
-      ? `\n  Mark as NOT APPLICABLE if: ${p.not_applicable_signals.join('; ')}`
+      ? `\n  Mark as NOT APPLICABLE if any of these are true: ${p.not_applicable_signals.join('; ')}`
       : '';
     return `${i + 1}. ${p.label} — score out of ${p.weight}${naSignals}\n${rubricLines}`;
   }).join('\n\n');
 
   const jsonScoreFields = SCORING_PARAMETERS.map(p =>
-    `    "${p.key}": { "score": 0, "applicable": true, "what_good_looks_like": "specific example of what the agent should have said", "evidence": "quote or reference from transcript supporting this score" }`
+    `    "${p.key}": { "score": 0, "applicable": true, "evidence": "exact quote from transcript or NOT MENTIONED", "what_good_looks_like": "specific sentence the agent should have said" }`
   ).join(',\n');
 
   return (
@@ -118,12 +139,14 @@ function buildScoringPrompt(transcript, personaName, city, area) {
     "1. Live CCTV feed accessible by parents on their phone\n" +
     "2. HighScope curriculum - the ONLY research-backed early years curriculum with data showing children have better employment rates, graduation rates, and life outcomes\n" +
     "3. Nutritious meals - no junk food, healthy snacks, in-house preparation\n\n" +
-    "IMPORTANT RULES:\n" +
-    "1. Only score parameters that were actually relevant to this call.\n" +
-    "2. If a parameter was not applicable (e.g. parent already visited so Visit Booking is irrelevant), set applicable to false and score to null.\n" +
-    "3. For each parameter, provide what_good_looks_like — a specific example sentence the agent should have said.\n" +
-    "4. For each parameter, provide evidence — a direct quote or reference from the transcript supporting your score. If not mentioned, say 'Not mentioned in transcript'.\n" +
-    "5. Be fair but accurate. If the agent mentioned something briefly, give partial credit.\n\n" +
+    "CRITICAL RULES FOR SCORING:\n" +
+    "1. ONLY score based on what is actually in the transcript. Do not assume or invent.\n" +
+    "2. For evidence field: copy an exact quote from the transcript. If not mentioned write NOT MENTIONED.\n" +
+    "3. For what_good_looks_like field: write what the agent SHOULD have said. This is your coaching advice, not a description of what they said.\n" +
+    "4. These two fields must NEVER contain the same content. evidence = what happened. what_good_looks_like = what should have happened.\n" +
+    "5. If a parameter was not applicable mark applicable as false and score as null.\n" +
+    "6. Note: Indian agents may pronounce HighScope as high scope or high school. If you see high school curriculum in transcript it likely means HighScope curriculum.\n" +
+    "7. Be fair. Give partial credit for partial answers.\n\n" +
     "Score each applicable parameter directly out of its maximum weight:\n\n" +
     paramSection + "\n\n" +
     "Return ONLY this exact JSON, nothing else:\n" +
@@ -131,8 +154,8 @@ function buildScoringPrompt(transcript, personaName, city, area) {
     '  "scores": {\n' +
     jsonScoreFields + "\n" +
     "  },\n" +
-    '  "top_strength": "one specific thing the agent did well with a direct transcript quote as evidence",\n' +
-    '  "top_gap": "the single most important thing the agent missed or mishandled with a direct transcript reference",\n' +
+    '  "top_strength": "one specific thing the agent did well — include an exact quote from the transcript as evidence",\n' +
+    '  "top_gap": "the single most important gap — reference the exact moment in transcript where it went wrong",\n' +
     '  "coaching_note": "2-3 sentences of specific actionable advice for this agent to improve next time"\n' +
     "}"
   );
@@ -158,8 +181,8 @@ function calculateResults(scores) {
       weight: p.weight,
       score,
       applicable,
-      what_good_looks_like: s?.what_good_looks_like || '',
-      evidence: s?.evidence || ''
+      evidence: s?.evidence || '',
+      what_good_looks_like: s?.what_good_looks_like || ''
     };
   });
 
@@ -167,7 +190,7 @@ function calculateResults(scores) {
     ? Math.round((totalScore / totalApplicableWeight) * 100)
     : 0;
 
-  let grade;
+  let grade = 'Poor';
   for (const threshold of GRADE_THRESHOLDS) {
     if (percentage >= threshold.min) { grade = threshold.grade; break; }
   }
@@ -176,6 +199,19 @@ function calculateResults(scores) {
 }
 
 async function scoreCall(transcript, personaName, city, area) {
+  // Short call detection
+  const wordCount = countWords(transcript);
+  if (wordCount < SHORT_CALL_WORD_THRESHOLD) {
+    return {
+      short_call: true,
+      word_count: wordCount,
+      message: 'Call too short to assess properly',
+      weighted_total: null,
+      grade: null,
+      parameters: null
+    };
+  }
+
   const prompt = buildScoringPrompt(transcript, personaName, city, area);
 
   const response = await client.messages.create({
@@ -191,6 +227,8 @@ async function scoreCall(transcript, personaName, city, area) {
   const { parameters, totalScore, totalApplicableWeight, percentage, grade } = calculateResults(parsed.scores);
 
   return {
+    short_call: false,
+    word_count: wordCount,
     scores: parsed.scores,
     parameters,
     totalScore,

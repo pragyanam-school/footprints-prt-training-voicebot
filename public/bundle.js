@@ -11165,7 +11165,7 @@ Reason: ${e4}`);
       <div class="rank">${i + 1}</div>
       <div style="flex:1">
         <strong>${agent.agentName}</strong>
-        <div style="font-size:12px;color:#636e72">${agent.sessions} sessions \xB7 Best: ${agent.bestScore}</div>
+        <div style="font-size:12px;color:#636e72">${agent.sessions} total \xB7 Last ${agent.last4Sessions}: avg ${agent.avgScore}% \xB7 Best: ${agent.bestScore}%</div>
       </div>
       <div class="avg-score" style="color:${agent.avgScore >= 65 ? "#2e7d32" : agent.avgScore >= 45 ? "#e65100" : "#c62828"}">${agent.avgScore}</div>
     </div>
@@ -11246,7 +11246,7 @@ Reason: ${e4}`);
           <div class="meta">${call.persona} \xB7 ${date}</div>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
-          ${score ? '<span style="font-size:18px;font-weight:700">' + score.weighted_total + "/100</span>" : ""}
+          ${score ? score.short_call ? '<span class="score-badge pending">Too Short</span>' : '<span style="font-size:18px;font-weight:700">' + score.weighted_total + "%</span>" : ""}
           ${getGradeBadge(score?.grade)}
         </div>
       </div>
@@ -11265,12 +11265,15 @@ Reason: ${e4}`);
     <h2 style="margin-bottom:4px">${call.agent_name}</h2>
     <p style="color:#636e72;font-size:13px;margin-bottom:20px">${call.persona} \xB7 ${formatDate(call.started_at)}</p>
   `;
+    if (score?.short_call) {
+      body += `<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 16px;margin-bottom:16px;color:#856404">\u26A0\uFE0F This call was too short to score (${score.word_count} words). Please complete a full practice call.</div>`;
+    }
     if (score) {
       const totalColor = score.weighted_total >= 65 ? "#2e7d32" : score.weighted_total >= 45 ? "#e65100" : "#c62828";
       body += `
       <div class="total-score">
-        <div class="number" style="color:${totalColor}">${score.weighted_total}</div>
-        <div style="font-size:14px;color:#636e72;margin-top:4px">out of 100 \xB7 ${score.grade}</div>
+        <div class="number" style="color:${totalColor}">${score.weighted_total}%</div>
+        <div style="font-size:14px;color:#636e72;margin-top:4px">${score.totalScore}/${score.totalApplicableWeight} \xB7 ${score.grade}</div>
       </div>
   <div class="score-grid">
   ${score.parameters ? score.parameters.map((p) => {

@@ -237,45 +237,72 @@ app.post('/agents', async (req, res) => {
 // ─── LEADERBOARD ──────────────────────────────────────────
 
 app.get('/leaderboard', async (req, res) => {
-  try {
-    const { dateFrom, dateTo } = req.query;
-    let query = supabase.from('calls').select('agent_id, agent_name, score, started_at')
-      .eq('status', 'completed').not('score', 'is', null);
-
-    if (dateFrom) query = query.gte('started_at', dateFrom);
-    if (dateTo) query = query.lte('started_at', dateTo);
-
-    const { data, error } = await query;
-    if (error) throw error;
-
-    const agentMap = {};
-    data.forEach(call => {
-      if (!call.agent_id || !call.score) return;
-      if (!agentMap[call.agent_id]) {
-        agentMap[call.agent_id] = {
-          agentId: call.agent_id,
-          agentName: call.agent_name,
-          scores: [],
-          sessions: 0
+    try {
+      const { dateFrom, dateTo } = req.query;
+  
+      let query = supabase
+        .from('calls')
+        .select('agent_id, agent_name, score, started_at')
+        .eq('status', 'completed')
+        .not('score', 'is', null)
+        .order('started_at', { ascending: false });
+  
+      if (dateFrom) query = query.gte('started_at', dateFrom);
+      if (dateTo) query = query.lte('started_at', dateTo);
+  
+      const { data, error } = await query;
+      if (error) throw error;
+  
+      // Group by agent
+      const agentMap = {};
+      data.forEach(call => {
+        if (!call.agent_id || !call.score) return;
+  
+        // Only include new-format scores (have parameters field)
+        if (!call.score.parameters) return;
+  
+        // Skip short calls
+        if (call.score.short_call) return;
+  
+        // Skip null weighted_total
+        if (call.score.weighted_total === null) return;
+  
+        if (!agentMap[call.agent_id]) {
+          agentMap[call.agent_id] = {
+            agentId: call.agent_id,
+            agentName: call.agent_name,
+            calls: []
+          };
+        }
+        agentMap[call.agent_id].calls.push({
+          score: call.score.weighted_total,
+          date: call.started_at
+        });
+      });
+  
+      // Calculate avg of last 4 calls per agent
+      const leaderboard = Object.values(agentMap).map(agent => {
+        const last4 = agent.calls.slice(0, 4);
+        const avgScore = Math.round(
+          last4.reduce((sum, c) => sum + c.score, 0) / last4.length
+        );
+        const bestScore = Math.max(...agent.calls.map(c => c.score));
+  
+        return {
+          agentId: agent.agentId,
+          agentName: agent.agentName,
+          avgScore,
+          sessions: agent.calls.length,
+          last4Sessions: last4.length,
+          bestScore
         };
-      }
-      agentMap[call.agent_id].scores.push(call.score.weighted_total);
-      agentMap[call.agent_id].sessions++;
-    });
-
-    const leaderboard = Object.values(agentMap).map(agent => ({
-      agentId: agent.agentId,
-      agentName: agent.agentName,
-      avgScore: Math.round(agent.scores.reduce((a, b) => a + b, 0) / agent.scores.length),
-      sessions: agent.sessions,
-      bestScore: Math.max(...agent.scores)
-    })).sort((a, b) => b.avgScore - a.avgScore);
-
-    res.json(leaderboard);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to load leaderboard' });
-  }
-});
+      }).sort((a, b) => b.avgScore - a.avgScore);
+  
+      res.json(leaderboard);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to load leaderboard' });
+    }
+  });
 
 // ─── AGENT SUMMARY ────────────────────────────────────────
 
@@ -305,10 +332,12 @@ app.get('/summary/:agentId', async (req, res) => {
       visit_booking: 0, nutrition: 0, tone_empathy: 0
     };
     data.forEach(c => {
-      Object.keys(paramAvgs).forEach(k => {
-        paramAvgs[k] += c.score.scores[k] || 0;
+        if (!c.score.parameters) return;
+        if (c.score.short_call) return;
+        Object.keys(paramAvgs).forEach(k => {
+          paramAvgs[k] += c.score.scores?.[k]?.score || 0;
+        });
       });
-    });
     Object.keys(paramAvgs).forEach(k => {
       paramAvgs[k] = Math.round((paramAvgs[k] / data.length) * 10) / 10;
     });
