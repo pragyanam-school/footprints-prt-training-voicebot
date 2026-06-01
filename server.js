@@ -7,7 +7,7 @@ const { scoreCall } = require('./scoring');
 const { supabase } = require('./db');
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static('public'));
 
 const cities = JSON.parse(fs.readFileSync('./cities.json', 'utf8'));
