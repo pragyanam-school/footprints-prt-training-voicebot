@@ -103,6 +103,7 @@ app.post('/webhook', async (req, res) => {
     if (event.message?.type === 'end-of-call-report') {
       const callId = event.message.call?.id;
       const transcript = event.message.transcript;
+      const recordingUrl = event.message.recordingUrl || event.message.artifact?.recordingUrl || null;
       if (!callId || !transcript) return res.sendStatus(200);
 
       const { data: existing } = await supabase
@@ -119,6 +120,8 @@ app.post('/webhook', async (req, res) => {
         existing?.area || 'Unknown'
       );
 
+      if (recordingUrl) score.recording_url = recordingUrl;
+
       await supabase.from('calls').upsert({
         id: callId,
         agent_id: existing?.agent_id || null,
@@ -132,7 +135,7 @@ app.post('/webhook', async (req, res) => {
         transcript, score
       });
 
-      console.log(`Call ${callId} scored: ${score.weighted_total}/100`);
+      console.log(`Call ${callId} scored: ${score.weighted_total}/100${recordingUrl ? ' — recording saved' : ''}`);
     }
     res.sendStatus(200);
   } catch (err) {

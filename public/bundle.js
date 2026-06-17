@@ -11293,6 +11293,17 @@ Reason: ${e4}`);
     } else {
       body += '<p style="color:#636e72">Score not yet available.</p>';
     }
+    const recordingUrl = call.score?.recording_url;
+    if (recordingUrl) {
+      body += `
+      <div style="margin-top:20px;margin-bottom:16px">
+        <h4 style="margin-bottom:8px">Call Recording</h4>
+        <audio controls style="width:100%;border-radius:8px;background:#f8f9fa" src="${recordingUrl}">
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+    `;
+    }
     if (call.transcript) {
       body += `<h4 style="margin-top:20px;margin-bottom:8px">Call Transcript</h4><div class="transcript-box">${call.transcript}</div>`;
     }
