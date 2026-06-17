@@ -105,9 +105,7 @@ app.post('/webhook', async (req, res) => {
       const { data: existing } = await supabase
         .from('calls')
         .select('*')
-        .eq('status', 'in-progress')
-        .order('started_at', { ascending: false })
-        .limit(1)
+        .eq('id', callId)
         .single();
 
       console.log(`Scoring call ${callId}...`);
@@ -130,10 +128,6 @@ app.post('/webhook', async (req, res) => {
         ended_at: new Date().toISOString(),
         transcript, score
       });
-
-      if (existing && existing.id !== callId) {
-        await supabase.from('calls').delete().eq('id', existing.id);
-      }
 
       console.log(`Call ${callId} scored: ${score.weighted_total}/100`);
     }
