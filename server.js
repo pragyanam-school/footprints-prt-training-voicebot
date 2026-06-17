@@ -17,7 +17,10 @@ const personas = [
   { name: 'Ankita Sharma', assistantId: process.env.VAPI_ASSISTANT_ID_ANKITA || process.env.VAPI_ASSISTANT_ID },
   { name: 'Neha Gupta', assistantId: process.env.VAPI_ASSISTANT_ID_NEHA || process.env.VAPI_ASSISTANT_ID },
   { name: 'Rashmi Jain', assistantId: process.env.VAPI_ASSISTANT_ID_RASHMI || process.env.VAPI_ASSISTANT_ID },
-  { name: 'Ritu Verma', assistantId: process.env.VAPI_ASSISTANT_ID_RITU || process.env.VAPI_ASSISTANT_ID }
+  { name: 'Ritu Verma', assistantId: process.env.VAPI_ASSISTANT_ID_RITU || process.env.VAPI_ASSISTANT_ID },
+  { name: 'Vikram Malhotra', assistantId: process.env.VAPI_ASSISTANT_ID_VIKRAM || process.env.VAPI_ASSISTANT_ID },
+  { name: 'Deepika Rao', assistantId: process.env.VAPI_ASSISTANT_ID_DEEPIKA || process.env.VAPI_ASSISTANT_ID },
+  { name: 'Sunita Pillai', assistantId: process.env.VAPI_ASSISTANT_ID_SUNITA || process.env.VAPI_ASSISTANT_ID }
 ];
 
 function getRandomLocation() {
