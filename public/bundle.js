@@ -11039,23 +11039,6 @@ Reason: ${e4}`);
       currentArea = config.area;
       currentPersona = config.persona;
       vapi = new import_web.default(config.publicKey);
-      vapi.on("call-start", async (call) => {
-        currentCallId = call?.id || call?.call?.id || "call-" + Date.now();
-        console.log("call-start, id:", currentCallId);
-        await fetch("/register-call", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            callId: currentCallId,
-            agentName: currentUser.name,
-            agentId: currentUser.id,
-            city: currentCity,
-            area: currentArea,
-            persona: currentPersona
-          })
-        });
-        showCallActive();
-      });
       vapi.on("call-end", () => {
         showCallEnded();
         setTimeout(() => {
@@ -11068,7 +11051,26 @@ Reason: ${e4}`);
         alert("Call error: " + (e?.message || "Unknown error"));
         resetCallUI();
       });
-      await vapi.start(config.assistantId, { variableValues: config.variableValues });
+      const callObj = await vapi.start(config.assistantId, { variableValues: config.variableValues });
+      currentCallId = callObj?.id;
+      console.log("call started, id:", currentCallId);
+      if (currentCallId) {
+        await fetch("/register-call", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            callId: currentCallId,
+            agentName: currentUser.name,
+            agentId: currentUser.id,
+            city: currentCity,
+            area: currentArea,
+            persona: currentPersona
+          })
+        });
+      } else {
+        console.error("Vapi did not return a call ID \u2014 registration skipped");
+      }
+      showCallActive();
     } catch (err) {
       alert("Failed to start call: " + err.message);
       resetCallUI();
